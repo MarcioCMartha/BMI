@@ -13,7 +13,7 @@ class IMCCalculatorApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white, // Fundo branco
+        scaffoldBackgroundColor: Colors.white,
       ),
       home: const IMCCalculator(),
     );
@@ -36,31 +36,32 @@ class _IMCCalculatorState extends State<IMCCalculator> {
     final double? weight = double.tryParse(_weightController.text);
 
     if (height != null && weight != null && height > 0) {
-      final double imc = weight / (height * height);
+      final double imc = weight / ((height/100) * (height/100)) ;
       String category;
 
       if (imc < 18.5) {
-        category = "Abaixo do peso";
+        category = "Underweight";
       } else if (imc >= 18.5 && imc < 24.9) {
-        category = "Peso normal";
+        category = "Normal";
       } else if (imc >= 25 && imc < 29.9) {
-        category = "Sobrepeso";
+        category = "Overwight";
       } else {
-        category = "Obesidade";
+        category = "Obesity";
       }
 
-      // Navegar para a página de resultados passando os valores do IMC e a categoria
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => ResultPage(
             imc: imc,
             category: category,
+            weight: _weightController.text,
+            height: _heightController.text,
+            onBack: _resetFields,
           ),
         ),
       );
     } else {
-      // Se os valores não forem válidos, exibe um alerta
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -81,196 +82,32 @@ class _IMCCalculatorState extends State<IMCCalculator> {
     }
   }
 
+  void _resetFields() {
+    setState(() {
+      _heightController.clear();
+      _weightController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Body'),
+        title: const Text('Your Body',
+        style: TextStyle(
+        fontSize: 16.0,  // Diminuindo o tamanho da fonte
+          ),
+        ),
         elevation: 0,
-        backgroundColor: Colors.white, // Cor da AppBar azul
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black54,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'BMI Calculator', // Alterado para "BMI Calculator"
-              textAlign: TextAlign.left, // Alinhado à esquerda
-              style: TextStyle(
-                fontSize: 22.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black, // Cor preta para o título
-              ),
-            ),
-            const SizedBox(height: 20.0),
-////////////////////////////////////////////////////////////////////////////////////////
-
-            Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    // Coluna para selecionar Homem
-    Expanded(
-      child: GestureDetector(
-        onTap: () {
-          // Ação ao selecionar Homem
-          print("Homem selecionado");
-        },
-        child: Column(
-          children: [
-            Image.asset(
-              'assets/images/man.png', // Caminho da imagem do homem
-              width: 100,
-              height:100,
-            ),
-            const SizedBox(height: 8.0),
-            const Text(
-              'Homem',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+      body: IMCCalculatorBody(
+        heightController: _heightController,
+        weightController: _weightController,
+        onCalculate: _calculateIMC,
+        isEditable: true,
       ),
-    ),
-    const SizedBox(width: 16.0),
-    // Coluna para selecionar Mulher
-    Expanded(
-      child: GestureDetector(
-        onTap: () {
-          // Ação ao selecionar Mulher
-          print("Mulher selecionada");
-        },
-        child: Column(
-          children: [
-            Image.asset(
-              'assets/images/woman.png', // Caminho da imagem da mulher
-              width: 100,
-              height: 100,
-            ),
-            const SizedBox(height: 8.0),
-            const Text(
-              'Mulher',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    ),
-  ],
-),
-////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-            // Duas colunas para peso e altura
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Coluna do Peso
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment
-                        .center, // Centraliza o conteúdo da coluna
-                    children: [
-                      const Text(
-                        'Your Weight (kg)',
-                        style: TextStyle(
-                          fontSize: 14.0, // Fonte do label em 14
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black, // Cor preta para o label
-                        ),
-                        textAlign: TextAlign.center, // Centraliza o label
-                      ),
-                      const SizedBox(height: 8.0),
-                      _buildTextField(
-                        controller: _weightController,
-                        label: '',
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16.0),
-                // Coluna da Altura
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment
-                        .center, // Centraliza o conteúdo da coluna
-                    children: [
-                      const Text(
-                        'Your Height',
-                        style: TextStyle(
-                          fontSize: 14.0, // Fonte do label em 14
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black, // Cor preta para o label
-                        ),
-                        textAlign: TextAlign.center, // Centraliza o label
-                      ),
-                      const SizedBox(height: 8.0),
-                      _buildTextField(
-                        controller: _heightController,
-                        label: '',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20.0),
-
-            // Botão para calcular
-            ElevatedButton(
-              onPressed: _calculateIMC,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14.0),
-                backgroundColor: Colors.blue, // Cor azul para o botão
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-              child: const Text(
-                'Calculate your BMI', // Texto alterado
-                style: TextStyle(fontSize: 18.0),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: TextInputType.number,
-      style: const TextStyle(
-        fontSize: 30.0, // Aumentar fonte para 30
-        fontWeight: FontWeight.bold, // Texto em negrito
-      ),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(
-          fontSize: 14.0, // Fonte do label em 14
-          color: Colors.black, // Cor preta para o label
-        ),
-        border: InputBorder.none, // Remover borda
-        filled: true,
-        fillColor: Colors.white, // Fundo branco
-      ),
-      textAlign: TextAlign.center, // Centraliza o texto dentro do campo
     );
   }
 }
@@ -278,64 +115,330 @@ class _IMCCalculatorState extends State<IMCCalculator> {
 class ResultPage extends StatelessWidget {
   final double imc;
   final String category;
+  final String weight;
+  final String height;
+  final VoidCallback onBack;
 
-  const ResultPage({super.key, required this.imc, required this.category});
+  const ResultPage({
+    super.key,
+    required this.imc,
+    required this.category,
+    required this.weight,
+    required this.height,
+    required this.onBack,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Resultado do IMC'),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
+        title: const Text('Your Body',
+        style: TextStyle(
+        fontSize: 16.0,  // Diminuindo o tamanho da fonte
+          ),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black54,
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      body: Column(
+        children: [
+          Expanded(
+            child: IMCCalculatorBody(
+              heightController: TextEditingController(text: height),
+              weightController: TextEditingController(text: weight),
+              onCalculate: () {},
+              isEditable: false,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+             
+            child: Column(
+              children: [
+                Text(
+                  'Your BMI',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black54,
+                      ),
+                ),
+                Text(
+                  '${imc.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  category,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      onBack();
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Calculate BMI again',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue, // Cor do texto clicável
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class IMCCalculatorBody extends StatelessWidget {
+  final TextEditingController heightController;
+  final TextEditingController weightController;
+  final VoidCallback onCalculate;
+  final bool isEditable;
+
+  const IMCCalculatorBody({
+    super.key,
+    required this.heightController,
+    required this.weightController,
+    required this.onCalculate,
+    required this.isEditable,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
-                'Seu IMC é:',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue[800],
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              Text(
-                imc.toStringAsFixed(2),
-                style: TextStyle(
-                  fontSize: 50.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue[900],
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              Text(
-                category,
+              const Text(
+                'BMI Calculator',
                 style: TextStyle(
                   fontSize: 22.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue[600],
+                  color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 30.0),
+              const Spacer(),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context); // Volta para a tela anterior
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const IMCInfoPage(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(0),
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
                 ),
-                child: const Text(
-                  'Voltar',
-                  style: TextStyle(fontSize: 18.0),
+                child: const Icon(
+                  Icons.info,
+                  size: 30,
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 10.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildGenderColumn('', 'assets/images/man.png'),
+              const SizedBox(width: 16.0),
+              _buildGenderColumn('', 'assets/images/woman.png'),
+            ],
+          ),
+          const SizedBox(height: 20.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildInputColumn('Your Weight (kg)', weightController, isEditable),
+              const SizedBox(width: 16.0),
+              _buildInputColumn('Your Height (cm)', heightController, isEditable),
+            ],
+          ),
+          const SizedBox(height: 20.0),
+          if (isEditable)
+            ElevatedButton(
+              onPressed: onCalculate,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14.0),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              child: const Text(
+                'Calculate your BMI',
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGenderColumn(String label, String imagePath) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          print("$label selecionado");
+        },
+        child: Column(
+          children: [
+            Image.asset(
+              imagePath,
+              width: 100,
+              height: 100,
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputColumn(
+      String label, TextEditingController controller, bool isEditable) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            enabled: isEditable,
+            style: const TextStyle(
+              fontSize: 30.0,
+              fontWeight: FontWeight.bold,
+              
+            ),
+            textAlign: TextAlign.center,
+            decoration: const InputDecoration(
+            border: InputBorder.none, // Remove o underline
+            ),            
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class IMCInfoPage extends StatelessWidget {
+  const IMCInfoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Your Body',
+        style: TextStyle(
+        fontSize: 16.0,  // Diminuindo o tamanho da fonte
+          ),
+        ),
+        
+        centerTitle: false,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black54,
+      ),
+      body: const Padding(
+        padding: EdgeInsets.all(50.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'BMI categories',
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 40.0),
+              ],
+            ),
+          ),
+            Text(
+              'Less than 18.5',
+              style: TextStyle(fontSize: 30.0 , fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "you're underweight",
+              style: TextStyle(fontSize: 30.0),
+            ),
+            SizedBox(height: 30.0),
+            Text(
+              '18.5 to 24.9',
+              style: TextStyle(fontSize: 30.0 , fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "you're normal",
+              style: TextStyle(fontSize: 30.0),
+            ),
+            SizedBox(height: 30.0),
+            Text(
+              '25 to 29.9',
+              style: TextStyle(fontSize: 30.0 , fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "you´re overweight",
+              style: TextStyle(fontSize: 30.0),
+            ),
+            SizedBox(height: 30.0),
+            Text(
+              '30 or more',
+              style: TextStyle(fontSize: 30.0 , fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'obesity',
+              style: TextStyle(fontSize: 30.0),
+            ),
+            
+          ],
         ),
       ),
     );
