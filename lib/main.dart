@@ -85,7 +85,7 @@ class _IMCCalculatorState extends State<IMCCalculator> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Body'), **
+        title: const Text('Your Body'), 
         elevation: 0,
         backgroundColor: Colors.white,  // Cor da AppBar azul
       ),
