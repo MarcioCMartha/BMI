@@ -85,9 +85,9 @@ class _IMCCalculatorState extends State<IMCCalculator> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Body'), 
+        title: const Text('Your Body'),
         elevation: 0,
-        backgroundColor: Colors.white,  // Cor da AppBar azul
+        backgroundColor: Colors.white, // Cor da AppBar azul
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -104,6 +104,73 @@ class _IMCCalculatorState extends State<IMCCalculator> {
               ),
             ),
             const SizedBox(height: 20.0),
+////////////////////////////////////////////////////////////////////////////////////////
+
+            Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    // Coluna para selecionar Homem
+    Expanded(
+      child: GestureDetector(
+        onTap: () {
+          // Ação ao selecionar Homem
+          print("Homem selecionado");
+        },
+        child: Column(
+          children: [
+            Image.asset(
+              'assets/images/man.png', // Caminho da imagem do homem
+              width: 100,
+              height:100,
+            ),
+            const SizedBox(height: 8.0),
+            const Text(
+              'Homem',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    ),
+    const SizedBox(width: 16.0),
+    // Coluna para selecionar Mulher
+    Expanded(
+      child: GestureDetector(
+        onTap: () {
+          // Ação ao selecionar Mulher
+          print("Mulher selecionada");
+        },
+        child: Column(
+          children: [
+            Image.asset(
+              'assets/images/woman.png', // Caminho da imagem da mulher
+              width: 100,
+              height: 100,
+            ),
+            const SizedBox(height: 8.0),
+            const Text(
+              'Mulher',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    ),
+  ],
+),
+////////////////////////////////////////////////////////////////////////////////////////
+
+
 
             // Duas colunas para peso e altura
             Row(
@@ -112,7 +179,8 @@ class _IMCCalculatorState extends State<IMCCalculator> {
                 // Coluna do Peso
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center, // Centraliza o conteúdo da coluna
+                    crossAxisAlignment: CrossAxisAlignment
+                        .center, // Centraliza o conteúdo da coluna
                     children: [
                       const Text(
                         'Your Weight (kg)',
@@ -135,7 +203,8 @@ class _IMCCalculatorState extends State<IMCCalculator> {
                 // Coluna da Altura
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center, // Centraliza o conteúdo da coluna
+                    crossAxisAlignment: CrossAxisAlignment
+                        .center, // Centraliza o conteúdo da coluna
                     children: [
                       const Text(
                         'Your Height',
@@ -164,6 +233,7 @@ class _IMCCalculatorState extends State<IMCCalculator> {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14.0),
                 backgroundColor: Colors.blue, // Cor azul para o botão
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
