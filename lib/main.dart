@@ -155,16 +155,16 @@ class ResultPage extends StatelessWidget {
              
             child: Column(
               children: [
-                Text(
+                const Text(
                   'Your BMI',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.black54,
                       ),
                 ),
                 Text(
-                  '${imc.toStringAsFixed(2)}',
+                  imc.toStringAsFixed(1),
                   style: const TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
@@ -185,7 +185,7 @@ class ResultPage extends StatelessWidget {
                       onBack();
                       Navigator.pop(context);
                     },
-                    child: Text(
+                    child: const Text(
                       'Calculate BMI again',
                       style: TextStyle(
                         fontSize: 18.0,
